@@ -20,10 +20,6 @@ func Align(a, b, filler string, match, mismatch, gap int) (word1, word2 string, 
 
 	alen := len(strSlA) + 1
 	blen := len(strSlB) + 1
-	maxLen := alen
-	if maxLen < blen {
-		maxLen = blen
-	}
 
 	f := make([]int, alen*blen)
 	for i := 1; i < alen; i++ {
