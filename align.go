@@ -73,13 +73,13 @@ func Align(a, b, filler string, match, mismatch, gap int) (word1, word2 string, 
 		indexA := (path[i] / blen) - 1
 		if indexA >= 0 && indexA < len(strSlA) {
 			word1 = word1 + strSlA[indexA]
+			strSlA[indexA] = filler
 		}
-		strSlA[indexA] = filler
 		indexB := (path[i] % blen) - 1
 		if indexB >= 0 && indexB < len(strSlB) {
 			word2 = word2 + strSlB[indexB]
+			strSlB[indexB] = filler
 		}
-		strSlB[indexB] = filler
 	}
 	return word1, word2, score
 }
