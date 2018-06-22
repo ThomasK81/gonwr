@@ -22,14 +22,14 @@ var test = testgroup{
 func TestAlign(t *testing.T) {
 	string1 := test.input[0]
 	string2 := test.input[1]
-	word1, word2, score := gonwr.Align(string1, string2, "#", 1, -1, -1)
-	if word1 != test.output[0] {
+	word1, word2, score := gonwr.Align([]rune(string1), []rune(string2), rune('#'), 1, -1, -1)
+	if string(word1) != test.output[0] {
 		t.Error(
 			"expected", test.output[0],
 			"got", word1,
 		)
 	}
-	if word2 != test.output[1] {
+	if string(word2) != test.output[1] {
 		t.Error(
 			"expected", test.output[1],
 			"got", word2,

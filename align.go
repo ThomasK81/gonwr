@@ -4,22 +4,13 @@ func idx(i, j, blen int) int {
 	return (i * blen) + j
 }
 
-// Align takes two strings as well as three integers for the Needleman-Wunsch scoring function.
-// It also takes another string argument that sets the filler character, e.g. "-"
-// It returns the final score, as well as two aligned strings
-func Align(a, b, filler string, match, mismatch, gap int) (word1, word2 string, score int) {
+// Align takes two Rune slices as well as three integers for the Needleman-Wunsch scoring function.
+// It also takes a Rune that sets the filler character, e.g. rune('#')
+// It returns the final score, as well as two aligned Rune slices.
+func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2 []rune, score int) {
 	tbmap := make(map[int]int)
-	strSlA := []string{}
-	strSlB := []string{}
-	for i := 0; i < len([]rune(a)); i++ {
-		strSlA = append(strSlA, string([]rune(a)[i]))
-	}
-	for i := 0; i < len([]rune(b)); i++ {
-		strSlB = append(strSlB, string([]rune(b)[i]))
-	}
-
-	alen := len(strSlA) + 1
-	blen := len(strSlB) + 1
+	alen := len(a) + 1
+	blen := len(b) + 1
 
 	f := make([]int, alen*blen)
 	for i := 1; i < alen; i++ {
@@ -40,7 +31,7 @@ func Align(a, b, filler string, match, mismatch, gap int) (word1, word2 string, 
 		}
 		indexB := i%blen - 1
 		score := match
-		if strSlA[j] != strSlB[indexB] {
+		if a[j] != b[indexB] {
 			score = mismatch
 		}
 		left := score + f[i-1]
@@ -71,15 +62,15 @@ func Align(a, b, filler string, match, mismatch, gap int) (word1, word2 string, 
 	}
 	for i := len(path) - 1; i >= 0; i-- {
 		indexA := (path[i] / blen) - 1
-		if indexA >= 0 && indexA < len(strSlA) {
-			word1 = word1 + strSlA[indexA]
-			strSlA[indexA] = filler
+		if indexA >= 0 && indexA < len(a) {
+			runeSl1 = append(runeSl1, a[indexA])
+			a[indexA] = filler
 		}
 		indexB := (path[i] % blen) - 1
-		if indexB >= 0 && indexB < len(strSlB) {
-			word2 = word2 + strSlB[indexB]
-			strSlB[indexB] = filler
+		if indexB >= 0 && indexB < len(b) {
+			runeSl2 = append(runeSl2, b[indexA])
+			b[indexB] = filler
 		}
 	}
-	return word1, word2, score
+	return runeSl1, runeSl2, score
 }
