@@ -1,7 +1,6 @@
 package gonwr_test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/ThomasK81/gonwr"
@@ -26,13 +25,13 @@ func TestAlign(t *testing.T) {
 	if string(word1) != test.output[0] {
 		t.Error(
 			"expected", test.output[0],
-			"got", word1,
+			"got", string(word1),
 		)
 	}
 	if string(word2) != test.output[1] {
 		t.Error(
 			"expected", test.output[1],
-			"got", word2,
+			"got", string(word2),
 		)
 	}
 	if score != test.score {
@@ -41,7 +40,7 @@ func TestAlign(t *testing.T) {
 			"got", score,
 		)
 	}
-	lentest := len(strings.Split(word1, "")) == len(strings.Split(word2, ""))
+	lentest := len(word1) == len(word2)
 	if !lentest {
 		t.Error(
 			"expected", true,

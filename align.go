@@ -68,7 +68,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 		}
 		indexB := (path[i] % blen) - 1
 		if indexB >= 0 && indexB < len(b) {
-			runeSl2 = append(runeSl2, b[indexA])
+			runeSl2 = append(runeSl2, b[indexB])
 			b[indexB] = filler
 		}
 	}
