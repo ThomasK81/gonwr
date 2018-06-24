@@ -63,12 +63,12 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 		start = tbmap[start]
 	}
 	for i := len(path) - 1; i >= 0; i-- {
-		indexA := (path[i] / blen) - 1
+		indexA := (path[i] / blen)
 		if indexA >= 0 && indexA < len(a) {
 			runeSl1 = append(runeSl1, a[indexA])
 			a[indexA] = filler
 		}
-		indexB := (path[i] % blen) - 1
+		indexB := (path[i] % blen)
 		if indexB >= 0 && indexB < len(b) {
 			runeSl2 = append(runeSl2, b[indexB])
 			b[indexB] = filler
