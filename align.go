@@ -11,29 +11,32 @@ func idx(i, j, blen int) int {
 // It returns the final score, as well as two aligned Rune slices.
 func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2 []rune, score int) {
 	tbmap := make(map[int]int)
-	alen := len(a) + 1
-	blen := len(b) + 1
-
+	// adding first element
+	a = append([]rune{rune(' ')}, a...)
+	b = append([]rune{rune(' ')}, b...)
+	alen := len(a)
+	blen := len(b)
+	// initialise matrix
 	f := make([]int, alen*blen)
-	for i := 1; i < alen; i++ {
-		f[idx(i, 0, blen)] = gap * i
-	}
-	for j := 1; j < blen; j++ {
-		f[idx(0, j, blen)] = gap * j
-	}
-
-	j := -1
-	for i := range f {
+	// fill matrix
+	f[0] = 0
+	rowcount := 1
+	for i := 1; i < len(f); i++ {
 		if i < blen {
+			f[i] = gap * i
+			tbmap[i] = i - 1
 			continue
 		}
 		if i%blen == 0 {
-			j++
+			f[i] = gap * rowcount
+			tbmap[i] = i - blen
+			rowcount++
 			continue
 		}
-		indexB := i%blen - 1
+		indexB := i % blen
+		indexA := i / blen
 		score := match
-		if a[j] != b[indexB] {
+		if a[indexA] != b[indexB] {
 			score = mismatch
 		}
 		left := score + f[i-1]
@@ -64,7 +67,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	}
 	path = append(path, 0)
 	for i := len(path) - 1; i >= 0; i-- {
-		indexA := (path[i] / blen)
+		indexA := path[i] / blen
 		if indexA >= 0 && indexA < len(a) {
 			runeSl1 = append(runeSl1, a[indexA])
 			a[indexA] = filler
