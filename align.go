@@ -1,7 +1,5 @@
 package gonwr
 
-import "fmt"
-
 func idx(i, j, blen int) int {
 	return (i * blen) + j
 }
@@ -77,6 +75,5 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 			b[indexB] = filler
 		}
 	}
-	fmt.Println(len(path), len(runeSl1), len(runeSl2))
 	return runeSl1, runeSl2, score
 }
