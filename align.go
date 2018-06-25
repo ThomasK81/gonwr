@@ -26,7 +26,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	f[0] = 0
 	rowcount := 1
 	// optimise here len(f) should be alen*blen
-	for i := 1; alen*blen < len(f); i++ {
+	for i := 1; i < alen*blen; i++ {
 		if i < blen {
 			tbmap[i] = cell{next: i - 1, score: gap * i}
 			f[i] = gap * i
