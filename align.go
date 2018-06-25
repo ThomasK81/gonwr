@@ -17,20 +17,13 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	b = append([]rune{rune(' ')}, b...)
 	alen := len(a)
 	blen := len(b)
-	f := make([]int, 2*blen)
-	f[0] = 0
 	rowcount := 1
 	for i := 1; i < alen*blen; i++ {
 		if i < blen {
 			tbmap[i] = [2]int{i - 1, gap * i}
-			f[i] = gap * i
 			continue
 		}
 		if i%blen == 0 {
-			for j := range f[0:blen] {
-				f[j] = f[j+blen]
-			}
-			f[blen] = gap * rowcount
 			tbmap[i] = [2]int{i - blen, gap * rowcount}
 			rowcount++
 			continue
