@@ -47,9 +47,9 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 			score = mismatch
 		}
 		// remains
-		left := score + f[i-1]
-		up := score + f[i-blen]
-		diag := score + f[i-(blen+1)]
+		left := score + tbmap[i-1].score
+		up := score + tbmap[i-blen].score
+		diag := score + tbmap[i-(blen+1)].score
 		result := diag
 		nextCell := i - (blen + 1)
 		if diag < left {
