@@ -71,7 +71,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	path := []int{}
 	// optimise here len(f) should be alen*blen, try to get rid of f
 	start := (alen * blen) - 1
-	fmt.Println(start)
+	fmt.Println("here", start)
 	for start != 0 {
 		fmt.Println(start)
 		score = score + tbmap[start].score
