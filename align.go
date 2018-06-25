@@ -4,27 +4,27 @@ func idx(i, j, blen int) int {
 	return (i * blen) + j
 }
 
-type cell struct {
-	next, score int
-}
-
 // Align takes two Rune slices as well as three integers for the Needleman-Wunsch scoring function.
 // It also takes a Rune that sets the filler character, e.g. rune('#')
 // It returns the final score, as well as two aligned Rune slices.
 func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2 []rune, score int) {
-	tbmap := make(map[int][2]int)
 	a = append([]rune{rune(' ')}, a...)
 	b = append([]rune{rune(' ')}, b...)
 	alen := len(a)
 	blen := len(b)
+	matlen := alen * blen
+	indexSl := make([]int, matlen)
+	scoreSl := make([]int, matlen)
 	rowcount := 1
 	for i := 1; i < alen*blen; i++ {
 		if i < blen {
-			tbmap[i] = [2]int{i - 1, gap * i}
+			indexSl[i] = i - 1
+			scoreSl[i] = gap * i
 			continue
 		}
 		if i%blen == 0 {
-			tbmap[i] = [2]int{i - blen, gap * rowcount}
+			indexSl[i] = i - blen
+			scoreSl[i] = gap * rowcount
 			rowcount++
 			continue
 		}
@@ -34,9 +34,9 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 		if a[indexA] != b[indexB] {
 			score = mismatch
 		}
-		left := score + tbmap[i-1][1]
-		up := score + tbmap[i-blen][1]
-		diag := score + tbmap[i-(blen+1)][1]
+		left := score + scoreSl[i-1]
+		up := score + scoreSl[i-blen]
+		diag := score + scoreSl[i-(blen+1)]
 		result := diag
 		nextCell := i - (blen + 1)
 		if diag < left {
@@ -51,14 +51,15 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 			result = up
 			nextCell = i - blen
 		}
-		tbmap[i] = [2]int{nextCell, result}
+		scoreSl[i] = result
+		indexSl[i] = nextCell
 	}
 	path := []int{}
 	start := (alen * blen) - 1
 	for start != 0 {
-		score = score + tbmap[start][1]
+		score = score + scoreSl[start]
 		path = append(path, start)
-		start = tbmap[start][0]
+		start = indexSl[start]
 	}
 	for i := len(path) - 1; i >= 0; i-- {
 		indexA := path[i] / blen
