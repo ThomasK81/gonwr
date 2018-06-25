@@ -4,30 +4,39 @@ func idx(i, j, blen int) int {
 	return (i * blen) + j
 }
 
+type cell struct {
+	next, score int
+}
+
 // Align takes two Rune slices as well as three integers for the Needleman-Wunsch scoring function.
 // It also takes a Rune that sets the filler character, e.g. rune('#')
 // It returns the final score, as well as two aligned Rune slices.
 func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2 []rune, score int) {
-	tbmap := make(map[int]int)
+	tbmap := make(map[int]cell)
 	// adding first element
 	a = append([]rune{rune(' ')}, a...)
 	b = append([]rune{rune(' ')}, b...)
 	alen := len(a)
 	blen := len(b)
-	// initialise matrix
-	f := make([]int, alen*blen)
+	// initialise matrix, optimise here should 2*blen
+	f := make([]int, 2*blen)
 	// fill matrix
 	f[0] = 0
 	rowcount := 1
+	// optimise here len(f) should be alen*blen
 	for i := 1; i < len(f); i++ {
 		if i < blen {
+			tbmap[i] = cell{next: i - 1, score: gap * i}
 			f[i] = gap * i
-			tbmap[i] = i - 1
 			continue
 		}
+		// optimise here, that is a row change so the row to fill is f[blen] if we keep it to 2*blen, copy over values
 		if i%blen == 0 {
-			f[i] = gap * rowcount
-			tbmap[i] = i - blen
+			for j := range f[0:blen] {
+				f[j] = f[j+blen]
+			}
+			f[blen] = gap * rowcount
+			tbmap[i] = cell{next: i - blen, score: gap * rowcount}
 			rowcount++
 			continue
 		}
@@ -37,31 +46,33 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 		if a[indexA] != b[indexB] {
 			score = mismatch
 		}
+		// remains
 		left := score + f[i-1]
 		up := score + f[i-blen]
 		diag := score + f[i-(blen+1)]
 		result := diag
-		tbmap[i] = i - (blen + 1)
+		nextCell := i - (blen + 1)
 		if diag < left {
 			result = left
-			tbmap[i] = i - 1
+			nextCell = i - 1
 			if left < up {
 				result = up
-				tbmap[i] = i - blen
+				nextCell = i - blen
 			}
 		}
 		if diag < up && diag >= left {
 			result = up
-			tbmap[i] = i - blen
+			nextCell = i - blen
 		}
-		f[i] = result
+		tbmap[i] = cell{next: nextCell, score: result}
 	}
 	path := []int{}
-	start := len(f) - 1
+	// optimise here len(f) should be alen*blen, try to get rid of f
+	start := alen*blen - 1
 	for start != 0 {
-		score = score + f[start]
+		score = score + tbmap[start].score
 		path = append(path, start)
-		start = tbmap[start]
+		start = tbmap[start].next
 	}
 	for i := len(path) - 1; i >= 0; i-- {
 		indexA := path[i] / blen
