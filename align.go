@@ -1,5 +1,7 @@
 package gonwr
 
+import "fmt"
+
 func idx(i, j, blen int) int {
 	return (i * blen) + j
 }
@@ -70,6 +72,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	// optimise here len(f) should be alen*blen, try to get rid of f
 	start := alen*blen - 1
 	for start != 0 {
+		fmt.Println(start)
 		score = score + tbmap[start].score
 		path = append(path, start)
 		start = tbmap[start].next
