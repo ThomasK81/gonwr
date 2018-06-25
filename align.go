@@ -12,7 +12,7 @@ type cell struct {
 // It also takes a Rune that sets the filler character, e.g. rune('#')
 // It returns the final score, as well as two aligned Rune slices.
 func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2 []rune, score int) {
-	tbmap := make(map[int]cell)
+	tbmap := make(map[int][2]int)
 	a = append([]rune{rune(' ')}, a...)
 	b = append([]rune{rune(' ')}, b...)
 	alen := len(a)
@@ -22,7 +22,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	rowcount := 1
 	for i := 1; i < alen*blen; i++ {
 		if i < blen {
-			tbmap[i] = cell{next: i - 1, score: gap * i}
+			tbmap[i] = [2]int{i - 1, gap * i}
 			f[i] = gap * i
 			continue
 		}
@@ -31,7 +31,7 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 				f[j] = f[j+blen]
 			}
 			f[blen] = gap * rowcount
-			tbmap[i] = cell{next: i - blen, score: gap * rowcount}
+			tbmap[i] = [2]int{i - blen, gap * rowcount}
 			rowcount++
 			continue
 		}
@@ -41,9 +41,9 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 		if a[indexA] != b[indexB] {
 			score = mismatch
 		}
-		left := score + tbmap[i-1].score
-		up := score + tbmap[i-blen].score
-		diag := score + tbmap[i-(blen+1)].score
+		left := score + tbmap[i-1][1]
+		up := score + tbmap[i-blen][1]
+		diag := score + tbmap[i-(blen+1)][1]
 		result := diag
 		nextCell := i - (blen + 1)
 		if diag < left {
@@ -58,14 +58,14 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 			result = up
 			nextCell = i - blen
 		}
-		tbmap[i] = cell{next: nextCell, score: result}
+		tbmap[i] = [2]int{nextCell, result}
 	}
 	path := []int{}
 	start := (alen * blen) - 1
 	for start != 0 {
-		score = score + tbmap[start].score
+		score = score + tbmap[start][1]
 		path = append(path, start)
-		start = tbmap[start].next
+		start = tbmap[start][0]
 	}
 	for i := len(path) - 1; i >= 0; i-- {
 		indexA := path[i] / blen
