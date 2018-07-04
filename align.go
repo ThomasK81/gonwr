@@ -56,8 +56,8 @@ func Align(a, b []rune, filler rune, match, mismatch, gap int) (runeSl1, runeSl2
 	}
 	path := []int{}
 	start := (alen * blen) - 1
+	score = scoreSl[start]
 	for start != 0 {
-		score = score + scoreSl[start]
 		path = append(path, start)
 		start = indexSl[start]
 	}
